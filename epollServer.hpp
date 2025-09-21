@@ -23,8 +23,8 @@ public:
     using ConnectionHandler = std::function<void(int)>;
     using MessageHandler    = std::function<void(int,const std::string&)>;
 
-    EpollServer(int port, rlim_t max_fds = 65535, int workers = 1)
-        : port_(port), max_fds_(max_fds), num_workers_(workers)
+    EpollServer(int port, rlim_t max_fds = 65535, int workers = 1, int read_buffer_size = 128)
+        : port_(port), max_fds_(max_fds), num_workers_(workers), read_buffer_size(read_buffer_size)
     {
         std::signal(SIGINT,  [](int){ stop_requested_ = true; });
         std::signal(SIGTERM, [](int){ stop_requested_ = true; });
@@ -114,6 +114,7 @@ private:
     int port_;
     rlim_t max_fds_;
     int num_workers_;
+    int read_buffer_size;
     std::atomic<int> server_fd_{-1};
     int event_fd_{-1};
     std::vector<std::thread> workers_;
@@ -215,7 +216,7 @@ private:
     }
 
     void handleClient(int fd) {
-        char buf[1024];
+        char buf[read_buffer_size];
         int n = ::read(fd,buf,sizeof(buf));
         if (n<=0) {
             ::close(fd);
