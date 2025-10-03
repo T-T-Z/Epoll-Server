@@ -25,7 +25,7 @@ A simple, self contained, header‑only C++ server that uses Linux epoll and thr
 # How to use:
 Example basic message server
 ```cpp
-#include "epollServer.hpp"
+#include "epollServer.h"
 
 int main() {
     EpollServer server(9000, 20000, 4, 1048, 1048); // port, max_fds, workers, TCP_read_buffer_size, UDP_read_buffer_size
@@ -63,7 +63,7 @@ g++ -o server server.cpp -pthread
 
 Example Client
 ```cpp
-#include "epollClient.hpp"
+#include "epollClient.h"
 
 int main() {
     EpollClient client("127.0.0.1", 9000, 2000, 1048, 1048); // host, port, reconnect_delay_in_ms, workers, TCP_read_buffer_size, UDP_read_buffer_size
